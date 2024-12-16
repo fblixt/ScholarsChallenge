@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:ScholarsChallenge.Converters"
+             xmlns:models="clr-namespace:ScholarsChallenge.Models"
+             xmlns:viewModels="clr-namespace:ScholarsChallenge.ViewModels"
+             x:Class="ScholarsChallenge.MainPage">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:AnswerColorConverter x:Key="AnswerColorConverter" />
+            <converters:AnswerBorderColorConverter x:Key="AnswerBorderColorConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="30,0"
+            Spacing="25">
+
+            <Image
+                Source="scholar_bot.png"
+                HeightRequest="185"
+                Aspect="AspectFit" />
+
+            <HorizontalStackLayout 
+                HorizontalOptions="Center">
+                
+                <Label Text="Welcome to "
+                    Style="{StaticResource Headline}"                    
+                    IsVisible="{Binding ShowWelcome}"/>
+                <Label Text="Scholar's Challenge!"
+                    Style="{StaticResource Headline}"/>
+                
+            </HorizontalStackLayout>
+
+            <Label Text="Best of luck to you!"
+                Style="{StaticResource SubHeadline}" 
+                IsVisible="{Binding ShowWelcome}"/>
+
+            <Button x:Name="GetResults"
+                Text="Start"
+                HorizontalOptions="Center"
+                Command="{Binding GetCommand}"
+                IsVisible="{Binding ShowStartButton}"/>
+            
+            <Frame 
+                BackgroundColor="white" WidthRequest="500"
+                IsVisible="{Binding ShowQuestions}">                
+                <VerticalStackLayout
+                    Spacing="25">                    
+
+                    <Label Text="{Binding CurrentResult.Question}"
+                        FontSize="20"
+                        TextColor="Black"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        IsVisible="{Binding ShowNextButton}"/>
+
+                    <CollectionView
+                        ItemsSource="{Binding CurrentResult.AnswerOptions}"
+                        SelectionMode="Single"
+                        IsVisible="{Binding ShowQuestions}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Button Text="{Binding .}"
+                                    TextColor="Black"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainViewModel}}, Path=SelectAnswerCommand}"
+                                    CommandParameter="{Binding .}" 
+                                    BackgroundColor="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainViewModel}}, Path=CurrentResult.SelectedAnswer, Converter={StaticResource AnswerColorConverter}, ConverterParameter={Binding .}}"
+                                    Margin="5"
+                                    BorderColor="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainViewModel}}, Path=CurrentResult.SelectedAnswer, Converter={StaticResource AnswerBorderColorConverter}, ConverterParameter={Binding .}}"
+                                    BorderWidth="2"/>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Button x:Name="Next"
+                        Text="Next"
+                        HorizontalOptions="Center"
+                        Command="{Binding NextCommand}"
+                        IsVisible="{Binding ShowNextButton}"/>
+
+                    <Label Text="{Binding ErrorMessage}"
+                        IsVisible="{Binding ShowErrorMessage}"/>
+
+                    <Label Text="{Binding Message}"
+                        HorizontalOptions="Center"
+                        IsVisible="{Binding ShowMessage}"/>
+
+                </VerticalStackLayout>                
+            </Frame>
+            
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
